@@ -4,12 +4,14 @@
  */
 package ffos.skroflin.controller;
 
+import ffos.skroflin.model.SkroflinKutija;
 import ffos.skroflin.model.SkroflinPolica;
 import ffos.skroflin.model.SkroflinProstorija;
 import ffos.skroflin.model.dto.SkroflinPolicaDTO;
 import ffos.skroflin.service.SkroflinPolicaService;
 import ffos.skroflin.service.SkroflinProstorijaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -125,6 +127,31 @@ public class SkroflinPolicaController {
         try {
             int ukupnaSirina = policaService.getUkupnaSirinaPolice();
             return new ResponseEntity<>("Ukupna širina svih polica u svim prostorijama" + " " + ukupnaSirina, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @GetMapping("/getKutijeNaPolici")
+    public ResponseEntity getKutijeNaPolici(
+            @RequestParam int sifra
+    ){
+        try {
+            if (sifra <= 0) {
+                return new ResponseEntity<>("Šifra mora biti veća od 0!" + " " + sifra, HttpStatus.BAD_REQUEST);
+            }
+            
+            SkroflinPolica polica = policaService.getBySifra(sifra);
+            if (polica == null) {
+                return new ResponseEntity<>("Ne postoji polica s navedenom šifrom" + " " + sifra, HttpStatus.NOT_FOUND);
+            }
+            
+            List<SkroflinKutija> kutije = policaService.getKutijeNaPolici(polica);
+            if (kutije.isEmpty()) {
+                return new ResponseEntity<>("Nema kutiji na polici sa šifrom" + " " + sifra, HttpStatus.NO_CONTENT);
+            }
+            
+            return new ResponseEntity<>(kutije, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

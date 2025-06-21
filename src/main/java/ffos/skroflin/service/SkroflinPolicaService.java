@@ -5,6 +5,7 @@
 package ffos.skroflin.service;
 
 import com.github.javafaker.Faker;
+import ffos.skroflin.model.SkroflinKutija;
 import ffos.skroflin.model.SkroflinPolica;
 import ffos.skroflin.model.SkroflinProstorija;
 import ffos.skroflin.model.dto.SkroflinPolicaDTO;
@@ -77,6 +78,13 @@ public class SkroflinPolicaService extends GlavniService{
         return session.createQuery(
                 "from skroflin_polica sp join sp.skroflinProstorija s where s = :prostorija", SkroflinPolica.class)
                 .setParameter("prostorija", prostorija)
+                .list();
+    }
+    
+    public List<SkroflinKutija> getKutijeNaPolici(SkroflinPolica polica){
+        return session.createQuery(
+                "from skroflin_kutija where skroflinPolica = :polica", SkroflinKutija.class)
+                .setParameter("polica", polica)
                 .list();
     }
 }
