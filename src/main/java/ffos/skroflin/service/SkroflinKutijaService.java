@@ -71,4 +71,15 @@ public class SkroflinKutijaService extends GlavniService{
         }
         session.getTransaction().commit();
     }
+    
+    public void dodajKutijeSObujmom(BigDecimal obujam, int broj){
+        session.beginTransaction();
+        for (int i = 0; i < broj; i++) {
+            SkroflinKutija sk = new SkroflinKutija();
+            sk.setDatumPohrane(new Date());
+            sk.setObujam(obujam);
+            session.persist(sk);
+        }
+        session.getTransaction().commit();
+    }
 }

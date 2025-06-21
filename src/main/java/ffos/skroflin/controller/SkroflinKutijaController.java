@@ -10,6 +10,7 @@ import ffos.skroflin.model.dto.SkroflinKutijaDTO;
 import ffos.skroflin.service.SkroflinKutijaService;
 import ffos.skroflin.service.SkroflinPolicaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.math.BigDecimal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -117,6 +118,22 @@ public class SkroflinKutijaController {
             }
             kutijaService.put(dto, sifra);
             return new ResponseEntity<>("Promijenjena polica s navedenom šifrom" + " " + sifra, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @PostMapping("/dodajKutijeSObujmom")
+    public ResponseEntity dodajKutijeSObujmom(
+            @RequestParam BigDecimal obujam,
+            @RequestParam int broj
+    ){
+        try {
+            if (broj <= 0) {
+                return new ResponseEntity<>("Broj kutija mora biti veći od 0!" + " " + broj, HttpStatus.BAD_REQUEST);
+            }
+            kutijaService.dodajKutijeSObujmom(obujam, broj);
+            return new ResponseEntity<>("Uspješno dodano" + " " + broj + " " + "kutije s obujmom od" + " " + obujam, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

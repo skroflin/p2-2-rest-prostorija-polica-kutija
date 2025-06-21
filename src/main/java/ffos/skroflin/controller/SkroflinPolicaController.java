@@ -119,4 +119,14 @@ public class SkroflinPolicaController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @GetMapping("/getUkupnaSirinaPolice")
+    public ResponseEntity getUkupnaSirinaPolice(){
+        try {
+            int ukupnaSirina = policaService.getUkupnaSirinaPolice();
+            return new ResponseEntity<>("Ukupna širina svih polica u svim prostorijama" + " " + ukupnaSirina, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

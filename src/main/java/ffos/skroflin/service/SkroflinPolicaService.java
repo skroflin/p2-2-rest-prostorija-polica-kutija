@@ -65,4 +65,18 @@ public class SkroflinPolicaService extends GlavniService{
         }
         session.getTransaction().commit();
     }
+    
+    public int getUkupnaSirinaPolice(){
+        Long ukupno = session.createQuery(
+                "select sum(sirina) from skroflin_polica", Long.class)
+                .getSingleResult();
+        return ukupno != null ? ukupno.intValue() : 0;
+    }
+    
+    public List<SkroflinPolica> getPoliceUProstoriji(SkroflinProstorija prostorija){
+        return session.createQuery(
+                "from skroflin_polica sp join sp.skroflinProstorija s where s = :prostorija", SkroflinPolica.class)
+                .setParameter("prostorija", prostorija)
+                .list();
+    }
 }

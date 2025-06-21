@@ -57,4 +57,11 @@ public class SkroflinProstorijaService extends GlavniService{
         }
         session.getTransaction().commit();
     }
+    
+    public List<SkroflinProstorija> getProstorPoKabinetu(boolean jeKabinet){
+        return session.createQuery(
+                "from skroflin_prostorija where kabinet = :kabinet", SkroflinProstorija.class)
+                .setParameter("kabinet", jeKabinet)
+                .list();
+    }
 }
