@@ -9,6 +9,13 @@ import ffos.skroflin.model.SkroflinProstorija;
 import ffos.skroflin.model.dto.SkroflinProstorijaDTO;
 import ffos.skroflin.service.SkroflinPolicaService;
 import ffos.skroflin.service.SkroflinProstorijaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -37,6 +44,15 @@ public class SkroflinProstorijaController {
         this.policaService = policaService;
     }
     
+    @Operation(
+            summary = "Dohvaća sve prostorije", tags = {"get", "prostorija"},
+            description = "Dohvaća sve prostorije sa svim podacima"
+    )
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SkroflinProstorija.class)))),
+                @ApiResponse(responseCode = "500", description = "Interna pogreška servera", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html"))
+            })
     @GetMapping("/get")
     public ResponseEntity get(){
         try {
@@ -46,6 +62,25 @@ public class SkroflinProstorijaController {
         }
     }
     
+    @Operation(
+            summary = "Dohvaća prostoriju po šifri",
+            description = "Dohvaća prostoriju po danoj šifri sa svim podacima. "
+            + "Ukoliko ne postoji prostorija za danu šifru vraća prazan odgovor",
+            tags = {"prostorija", "getBy"},
+            parameters = {
+                @Parameter(
+                        name = "sifra",
+                        allowEmptyValue = false,
+                        required = true,
+                        description = "Primarni ključ prostorije u bazi podataka, mora biti veći od nula",
+                        example = "2"
+                )})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SkroflinProstorija.class), mediaType = "application/json")),
+        @ApiResponse(responseCode = "204", description = "Ne postoji student za danu šifru", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html")),
+        @ApiResponse(responseCode = "400", description = "Šifra mora biti veća od nula", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html")),
+        @ApiResponse(responseCode = "500", description = "Interna pogreška servera", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html"))
+    })
     @GetMapping("/getBySifra")
     public ResponseEntity getBySifra(
             @RequestParam int sifra
@@ -65,6 +100,15 @@ public class SkroflinProstorijaController {
         }
     }
     
+    @Operation(
+            summary = "Kreira novu prostoriju",
+            tags = {"post", "prostorija"},
+            description = "Kreira novu prostoriju. Kabinet obavezan")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Kreirano", content = @Content(schema = @Schema(implementation = SkroflinProstorija.class), mediaType = "application/json")),
+        @ApiResponse(responseCode = "400", description = "Loš zahtjev (nije primljen dto objekt ili ne postoji ime ili prezime ili jmbag)", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html")),
+        @ApiResponse(responseCode = "500", description = "Interna pogreška servera", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html"))
+    })
     @PostMapping("/post")
     public ResponseEntity post(
             @RequestBody(required = true) SkroflinProstorijaDTO dto
@@ -82,6 +126,24 @@ public class SkroflinProstorijaController {
         }
     }
     
+    @Operation(
+            summary = "Unosi broj prostorija za dan broj",
+            description = "Masovno dodavanje za dan broj u obliku parametra. "
+            + "Pr. ukoliko korisnik odabere 10, unijeti će se 10 zapisa s lažnim podacima pomoću Faker biblioteke.",
+            tags = {"prostorija", "masovnoDodavanje", "post"},
+            parameters = {
+                @Parameter(
+                        name = "broj",
+                        allowEmptyValue = false,
+                        required = true,
+                        description = "Broj kojim utvrđujemo koliko zapisa unosimo, mora biti veći od nula",
+                        example = "2"
+                )})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SkroflinProstorija.class), mediaType = "application/json")),
+        @ApiResponse(responseCode = "400", description = "Broj mora biti veća od nula", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html")),
+        @ApiResponse(responseCode = "500", description = "Interna pogreška servera", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html"))
+    })
     @PostMapping("/masovnoDodavanje")
     public ResponseEntity masovnoDodavanje(
             @RequestParam int broj
@@ -97,6 +159,25 @@ public class SkroflinProstorijaController {
         }
     }
     
+    @Operation(
+            summary = "Mijenja podatke o prostoriji",
+            tags = {"put", "prostorija"},
+            description = "Mijenja podatke o prostoriji. Naziv i je li kabinet ili ne obavezno!",
+            parameters = {
+                @Parameter(
+                        name = "sifra",
+                        allowEmptyValue = false,
+                        required = true,
+                        description = "Primarni ključ prostorije u bazi podataka, mora biti veći od nula",
+                        example = "2"
+                )
+            }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Promjenjeno", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html")),
+        @ApiResponse(responseCode = "400", description = "Loš zahtjev (nije primljena šifra dobra ili dto objekt ili ne postoji naziv)", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html")),
+        @ApiResponse(responseCode = "500", description = "Interna pogreška servera", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html"))
+    })
     @PutMapping("/put")
     public ResponseEntity put(
             @RequestParam int sifra,
@@ -124,6 +205,25 @@ public class SkroflinProstorijaController {
         }
     }
     
+    @Operation(
+            summary = "Dohvaća prostoriju po kabinetu",
+            description = "Dohvaća prostoriju po tome je li kabinet ili ne uz sve svoje podatke. "
+            + "Ukoliko ne postoji prostorija za dani parametar, vraća prazan odgovor",
+            tags = {"prostorija", "get", "getProstorPoKabinetu"},
+            parameters = {
+                @Parameter(
+                        name = "jeKabinet",
+                        allowEmptyValue = false,
+                        required = true,
+                        description = "Booleov tip podatka (true or false)!",
+                        example = "2"
+                )})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SkroflinProstorija.class), mediaType = "application/json")),
+        @ApiResponse(responseCode = "204", description = "Ne postoji prostorija za danu vrijednost", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html")),
+        @ApiResponse(responseCode = "400", description = "Vrijednost se mora odabrati!", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html")),
+        @ApiResponse(responseCode = "500", description = "Interna pogreška servera", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html"))
+    })
     @GetMapping("/getProstorPoKabinetu")
     public ResponseEntity getProstorPoKabinetu(
             @RequestParam boolean jeKabinet
@@ -139,6 +239,25 @@ public class SkroflinProstorijaController {
         }
     }
     
+    @Operation(
+            summary = "Dohvaća police unutar prostorije",
+            description = "Dohvaća sve police unutar prostoriju, po danoj šifri prostorije sa svim podacima. "
+            + "Ukoliko ne postoji prostorija za danu šifru vraća prazan odgovor. Ukoliko prostorija nema police vraća tekst.",
+            tags = {"prostorija", "get", "getPoliceUProstoriji"},
+            parameters = {
+                @Parameter(
+                        name = "sifra",
+                        allowEmptyValue = false,
+                        required = true,
+                        description = "Primarni ključ prostorije u bazi podataka, mora biti veći od nula",
+                        example = "2"
+                )})
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SkroflinProstorija.class), mediaType = "application/json")),
+        @ApiResponse(responseCode = "204", description = "Ne postoji student za danu šifru", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html")),
+        @ApiResponse(responseCode = "400", description = "Šifra mora biti veća od nula", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html")),
+        @ApiResponse(responseCode = "500", description = "Interna pogreška servera", content = @Content(schema = @Schema(implementation = String.class), mediaType = "text/html"))
+    })
     @GetMapping("/getPoliceUProstoriji")
     public ResponseEntity getPoliceUProstoriji(
             @RequestParam int sifra
