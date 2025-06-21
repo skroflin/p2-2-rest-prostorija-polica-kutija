@@ -12,5 +12,5 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SkroflinKutijaService extends GlavniService{
-    
+
 }
