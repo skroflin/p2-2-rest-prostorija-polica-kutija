@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public record SkroflinKutijaDTO(
         @Schema(example = "2025-06-21") Date datumPohrane,
-        @Schema(example = "3,65") BigDecimal obujam,
+        @Schema(example = "3.65") BigDecimal obujam,
         @Schema(example = "B54") String oznakaKutije,
         @Schema(example = "1") int policaSifra
         ) {
