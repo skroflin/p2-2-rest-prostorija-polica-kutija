@@ -7,8 +7,8 @@
     <session-factory>
         <property name="connection.driver_class">org.mariadb.jdbc.Driver</property>
         <!-- Prvo kreirati bazu 
-        create database bazapodataka; -->
-        <property name="connection.url">jdbc:mariadb://localhost/bazapodataka</property>
+        create database skroflin_p2ir04; -->
+        <property name="connection.url">jdbc:mariadb://localhost/skroflin_p2ir04</property>
         <property name="dialect">org.hibernate.dialect.MariaDBDialect</property>
         <property name="connection.username">p2</property>
         <property name="connection.password">p2</property>
@@ -19,6 +19,9 @@
         <property name="hbm2ddl.auto">update</property>
     
         <!-- <mapping class="ffos.kolokvij.model.ImeKlase" /> -->
+        <mapping class="ffos.skroflin.model.SkroflinProstorija" />
+        <mapping class="ffos.skroflin.model.SkroflinPolica" />
+        <mapping class="ffos.skroflin.model.SkroflinKutija" />
     
 
     </session-factory>
