@@ -170,7 +170,7 @@ public class SkroflinPolicaController {
                         name = "sifra",
                         allowEmptyValue = false,
                         required = true,
-                        description = "Primarni ključ prostorije u bazi podataka, mora biti veći od nula",
+                        description = "Primarni ključ police u bazi podataka, mora biti veći od nula",
                         example = "2"
                 )
             }
