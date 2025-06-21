@@ -4,11 +4,14 @@
  */
 package ffos.skroflin.service;
 
+import com.github.javafaker.Faker;
 import ffos.skroflin.model.SkroflinKutija;
 import ffos.skroflin.model.SkroflinPolica;
 import ffos.skroflin.model.dto.SkroflinKutijaDTO;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 /**
@@ -41,6 +44,28 @@ public class SkroflinKutijaService extends GlavniService{
         SkroflinPolica skroflinPolica = session.get(SkroflinPolica.class, o.policaSifra());
         sk = new SkroflinKutija(o.datumPohrane(), o.obujam(), o.oznakaKutije(), skroflinPolica);
         session.persist(sk);
+        session.getTransaction().commit();
+    }
+    
+    public void delete(int sifra){
+        session.beginTransaction();
+        session.remove(session.get(SkroflinKutija.class, sifra));
+        session.getTransaction().commit();
+    }
+    
+    public void masovnoDodavanje(int broj){
+        SkroflinKutija sk;
+        Faker f = new Faker();
+        BigDecimal obujam = BigDecimal.valueOf(f.number().randomDouble(2, 100, 200));
+        int maksPolicaSifra = 2;
+        Date d = new Date();
+        session.beginTransaction();
+        for (int i = 0; i < broj; i++) {
+            int sifraPolice = f.number().numberBetween(1, maksPolicaSifra + 1);
+            SkroflinPolica sp = session.get(SkroflinPolica.class, sifraPolice);
+            sk = new SkroflinKutija(d, obujam, "Oznaka:" + " " + UUID.randomUUID(), sp);
+            session.persist(sk);
+        }
         session.getTransaction().commit();
     }
 }

@@ -4,6 +4,7 @@
  */
 package ffos.skroflin.service;
 
+import com.github.javafaker.Faker;
 import ffos.skroflin.model.SkroflinPolica;
 import ffos.skroflin.model.SkroflinProstorija;
 import ffos.skroflin.model.dto.SkroflinPolicaDTO;
@@ -45,6 +46,20 @@ public class SkroflinPolicaService extends GlavniService{
     public void delete(int sifra){
         session.beginTransaction();
         session.remove(session.get(SkroflinPolica.class, sifra));
+        session.getTransaction().commit();
+    }
+    
+    public void masovnoDodavanje(int broj){
+        SkroflinPolica sp;
+        Faker f = new Faker();
+        int maksProstorijaSifra = 3;
+        session.beginTransaction();
+        for (int i = 0; i < broj; i++) {
+            int prostorijaSifra = f.number().numberBetween(1, maksProstorijaSifra + 1);
+            SkroflinProstorija spr = session.get(SkroflinProstorija.class, prostorijaSifra);
+            sp = new SkroflinPolica(f.number().randomDigit(), f.number().randomDigit(), f.number().randomDigit(), spr);
+            session.persist(sp);
+        }
         session.getTransaction().commit();
     }
 }
