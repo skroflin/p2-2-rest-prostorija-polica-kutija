@@ -53,6 +53,7 @@ public class SkroflinProstorijaService extends GlavniService{
         session.beginTransaction();
         for (int i = 0; i < broj; i++) {
             sp = new SkroflinProstorija(f.random().nextBoolean(), f.name().name());
+            session.persist(sp);
         }
         session.getTransaction().commit();
     }
