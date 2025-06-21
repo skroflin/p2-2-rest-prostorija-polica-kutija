@@ -40,9 +40,12 @@ public class SkroflinKutijaService extends GlavniService{
     
     public void put(SkroflinKutijaDTO o, int sifra){
         session.beginTransaction();
-        SkroflinKutija sk = (SkroflinKutija) session.get(SkroflinKutija.class, sifra);
+        SkroflinKutija sk =  session.get(SkroflinKutija.class, sifra);
         SkroflinPolica skroflinPolica = session.get(SkroflinPolica.class, o.policaSifra());
-        sk = new SkroflinKutija(o.datumPohrane(), o.obujam(), o.oznakaKutije(), skroflinPolica);
+        sk.setDatumPohrane(o.datumPohrane());
+        sk.setObujam(o.obujam());
+        sk.setOznakaKutije(o.oznakaKutije());
+        sk.setSkroflinPolica(skroflinPolica);
         session.persist(sk);
         session.getTransaction().commit();
     }

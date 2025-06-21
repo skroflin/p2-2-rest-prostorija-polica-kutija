@@ -37,7 +37,7 @@ public class SkroflinProstorijaService extends GlavniService{
         SkroflinProstorija sp = (SkroflinProstorija) session.get(SkroflinProstorija.class, sifra);
         sp.setKabinet(o.kabinet());
         sp.setNaziv(o.naziv());
-        session.persist(sp);
+        session.merge(sp);
         session.getTransaction().commit();
     }
     

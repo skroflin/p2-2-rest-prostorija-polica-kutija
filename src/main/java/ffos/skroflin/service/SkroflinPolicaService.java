@@ -36,9 +36,12 @@ public class SkroflinPolicaService extends GlavniService{
     
     public void put(SkroflinPolicaDTO o, int sifra){
         session.beginTransaction();
-        SkroflinPolica sp = (SkroflinPolica) session.get(SkroflinPolica.class, sifra);
+        SkroflinPolica sp = session.get(SkroflinPolica.class, sifra);
         SkroflinProstorija skroflinProstorija = session.get(SkroflinProstorija.class, o.prostorijaSifra());
-        sp = new SkroflinPolica(o.duzina(), o.sirina(), o.visina(), skroflinProstorija);
+        sp.setDuzina(o.duzina());
+        sp.setSirina(o.sirina());
+        sp.setVisina(o.visina());
+        sp.setSkroflinProstorija(skroflinProstorija);
         session.persist(sp);
         session.getTransaction().commit();
     }
